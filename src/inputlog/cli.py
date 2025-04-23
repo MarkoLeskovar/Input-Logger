@@ -2,9 +2,8 @@ import os
 import argparse
 from datetime import datetime
 
-from logger import InputLogger
-
-__prog__ = 'loginput'
+from .logger import InputLogger
+from inputlog import __prog__, __version__
 
 
 def create_parser():
@@ -22,7 +21,7 @@ def create_parser():
 
     # Optional arguments
     options = parser.add_argument_group('options')
-    options.add_argument('-V', '--version', action='version', version='1.0.0', help='Show version and exit.')
+    options.add_argument('-V', '--version', action='version', version=__version__, help='Show version and exit.')
     options.add_argument('-h', '--help', action='help', help='Show help and exit.')
     options.add_argument('-v', '--verbose', action='store_true', help='Show input log.')
 
@@ -41,8 +40,7 @@ def path_type(value):
     return value
 
 
-# Run main function
-if __name__ == "__main__":
+def main_cli():
 
     # Parse arguments
     args_parser = create_parser()
@@ -69,5 +67,5 @@ if __name__ == "__main__":
     else:
         logger = InputLogger(database, True, True, True, True, args.verbose)
 
-    # Run the logger
+    # Run the app
     logger.run()

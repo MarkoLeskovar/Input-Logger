@@ -23,15 +23,6 @@ def main():
             for row in output:
                 print(row)
 
-        # DEBUG
-        debug("""
-        SELECT * FROM 
-        
-        
-        """)
-
-
-
         # Get metadata
         cursor.execute("SELECT * FROM metadata;")
         metadata = dict(cursor.fetchall())
@@ -83,9 +74,6 @@ def main():
         plt.legend()
         plt.show()
 
-
-
-        pass
 
 
     # Handle errors

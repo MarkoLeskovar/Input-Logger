@@ -98,14 +98,14 @@ class InputLogger:
                 self._mouse_listener = self._create_mouse_listener()
                 self._mouse_listener.start()
                 if self._debug:
-                    print('Started mouse logger')
+                    print('Started mouse inputlog')
 
             # Start keyboard listener
             if self._track_keyboard:
                 keyboard_listener = self._create_keyboard_listener()
                 keyboard_listener.start()
                 if self._debug:
-                    print('Started keyboard logger')
+                    print('Started keyboard inputlog')
 
             # Check active threads
             while True:
@@ -116,14 +116,14 @@ class InputLogger:
                         self._mouse_listener = self._create_mouse_listener()
                         self._mouse_listener.start()
                         if self._debug:
-                            print('Re-started mouse logger')
+                            print('Re-started mouse inputlog')
                 # Restart the keyboard listener
                 if self._keyboard_listener is not None:
                     if not self._keyboard_listener.is_alive():
                         self._keyboard_listener = self._create_keyboard_listener()
                         self._keyboard_listener.start()
                         if self._debug:
-                            print('Re-started keyboard logger')
+                            print('Re-started keyboard inputlog')
 
         except KeyboardInterrupt:
             self._stop_listeners()
