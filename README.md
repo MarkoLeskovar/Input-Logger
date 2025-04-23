@@ -2,13 +2,7 @@
 
 `loginput` is simple input logger app written in Python. It can log your mouse and keyboard input and save it in a local SQL database.  
 
-![app_icon](docs/icon.png)
-
-## Features
-
-* Mouse and keyboard logging
-* Simple command line interface (CLI)
-* Saves logs in a SQL database
+![app_icon](docs/teaser.png)
 
 
 ## Usage
@@ -16,7 +10,7 @@
 ### How to run the app?
 
 The app is tested and works on Windows 11. Please make sure you have installed the latest version of [Python](https://www.python.org/downloads/) before continuing. Furthermore, it is advisable
-to use python and install modules inside a [virtual environment](https://docs.python.org/3/library/venv.html). Copy the 
+to use Python and install modules inside a [virtual environment](https://docs.python.org/3/library/venv.html). Copy the 
 following commands into the terminal:   
 
 1. Clone the repository and navigate to the folder.
@@ -75,7 +69,7 @@ terminal:
 (TODO): Description of resulting SQL database structure will follow.
 
 
-### Minimal Python example
+## Minimal Python example
 
 The input logger can also be used within the python code environment as follows:
 
@@ -97,7 +91,7 @@ logger.run()
 ```
 
 
-## Further developments
+## Next steps and development ideas
 
 - [ ] Add various analysis scripts
 - [ ] Add support for taking screenshots
