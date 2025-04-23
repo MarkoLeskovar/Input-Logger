@@ -1,8 +1,6 @@
-import os
 import time
 import tkinter
 import threading
-import numpy as np
 from io import BytesIO
 from PIL import Image, ImageGrab
 from pynput import mouse, keyboard
@@ -18,8 +16,8 @@ from .database import create_database, SQL_KEY
 
 class InputLogger:
 
-    def __init__(self, output_folder: str, mouse_pos=True, mouse_click=True, mouse_scroll=True, keyboard=True, debug=False):
-        self._database = str(output_folder)
+    def __init__(self, database: str, mouse_pos=True, mouse_click=True, mouse_scroll=True, keyboard=True, debug=False):
+        self._database = str(database)
         self._track_mouse_pos = bool(mouse_pos)
         self._track_mouse_click = bool(mouse_click)
         self._track_mouse_scroll = bool(mouse_scroll)
@@ -30,16 +28,18 @@ class InputLogger:
         self._mouse_threshold_time_ms = 20
         self._mouse_pixel_threshold = 5
 
-        # Initialize values
-        self._id = 0
-        self._mouse_time = 0
+        # Initialize mouse values
         self._mouse_x = 0
         self._mouse_y = 0
         self._mouse_dx = 0
         self._mouse_dy = 0
+        self._mouse_time = 0
         self._mouse_pixel_threshold_squared = self._mouse_pixel_threshold ** 2
+
+        # Initialize other values
+        self._id = 0
         self._start_time_ms = _get_time_ms()
-        self._screen_size = np.asarray([tkinter.Tk().winfo_screenwidth(), tkinter.Tk().winfo_screenheight()])
+        self._screen_size = (tkinter.Tk().winfo_screenwidth(), tkinter.Tk().winfo_screenheight())
 
         # Create a database
         self._data_connection = create_database(self._database)
@@ -98,14 +98,14 @@ class InputLogger:
                 self._mouse_listener = self._create_mouse_listener()
                 self._mouse_listener.start()
                 if self._debug:
-                    print('Started mouse inputlog')
+                    print('Started mouse logger')
 
             # Start keyboard listener
             if self._track_keyboard:
                 keyboard_listener = self._create_keyboard_listener()
                 keyboard_listener.start()
                 if self._debug:
-                    print('Started keyboard inputlog')
+                    print('Started keyboard logger')
 
             # Check active threads
             while True:
@@ -116,14 +116,14 @@ class InputLogger:
                         self._mouse_listener = self._create_mouse_listener()
                         self._mouse_listener.start()
                         if self._debug:
-                            print('Re-started mouse inputlog')
+                            print('Re-started mouse logger')
                 # Restart the keyboard listener
                 if self._keyboard_listener is not None:
                     if not self._keyboard_listener.is_alive():
                         self._keyboard_listener = self._create_keyboard_listener()
                         self._keyboard_listener.start()
                         if self._debug:
-                            print('Re-started keyboard inputlog')
+                            print('Re-started keyboard logger')
 
         except KeyboardInterrupt:
             self._stop_listeners()
@@ -133,10 +133,13 @@ class InputLogger:
 
 
     def _stop_listeners(self):
-        if self._mouse_listener is not None and self._mouse_listener.is_alive():
-            self._mouse_listener.stop()
-        if self._keyboard_listener is not None and self._keyboard_listener.is_alive():
-            self._keyboard_listener.stop()
+        if self._mouse_listener is not None:
+            if self._mouse_listener.is_alive():
+                self._mouse_listener.stop()
+        if self._keyboard_listener is not None:
+            if self._keyboard_listener.is_alive():
+                self._keyboard_listener.stop()
+
 
     def _close_data_connection(self):
         self._data_lock.acquire()
@@ -289,7 +292,7 @@ def _grab_screenshot(format='png') -> BytesIO:
 def _get_time_ms():
     return int(time.time() * 1000)
 
-def _key_to_string(key: keyboard.Key | keyboard.KeyCode) -> tuple[str, str] | tuple[None, None]:
+def _key_to_string(key: keyboard.Key | keyboard.KeyCode) -> tuple[str, str]:
     if isinstance(key, keyboard.KeyCode):
         return key.char, SQL_KEY.char
     elif isinstance(key, keyboard.Key):

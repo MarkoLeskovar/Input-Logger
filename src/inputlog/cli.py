@@ -8,7 +8,8 @@ from inputlog import __prog__, __version__
 
 def create_parser():
     tab = '\x1b[C' * 4
-    text = f'This in an {__prog__} app. Input logger tracks mouse and keyboard input and saves it to a SQL database.'
+    text = (f'This in the "{__prog__}" app. An input logger that can track mouse and keyboard input and'
+            f' save it to a SQL database.')
 
     # Main parser
     parser = argparse.ArgumentParser(prog=__prog__, description=text, add_help=False)
