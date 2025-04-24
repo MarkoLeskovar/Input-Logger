@@ -3,8 +3,10 @@ import sys
 import sqlite3
 import numpy as np
 import pandas as pd
-
 import matplotlib.pyplot as plt
+
+# TODO : Check whihc character are printable etc...
+
 
 # Define main function
 def main():
@@ -13,7 +15,7 @@ def main():
     try:
 
         # Connect to a database
-        connection = sqlite3.connect('test.db')
+        connection = sqlite3.connect(os.path.join(os.pardir, 'output', 'test_1.db'))
         cursor = connection.cursor()
 
         # SQL debugger
@@ -30,7 +32,7 @@ def main():
         # Get screen information
         screen_size = np.asarray([int(metadata['screen_width']), int(metadata['screen_height'])])
 
-        # Query the mouse position
+        # Query mouse position
         cursor.execute("""
             SELECT x, y FROM events 
             JOIN mouse_pos_events 
@@ -38,15 +40,23 @@ def main():
         """)
         mouse_pos = np.asarray(cursor.fetchall())
 
-        # Query the mouse position
+        # Query mouse clicks
         cursor.execute("""
             SELECT x, y FROM events 
             JOIN mouse_click_events 
                 ON events.id = mouse_click_events.event_id 
             WHERE pressed = 'd';
         """)
-        mouse_click = cursor.fetchall()
-        mouse_click = np.asarray(mouse_click)
+        mouse_click = np.asarray(cursor.fetchall())
+
+        # Query key presses
+        cursor.execute("""
+            SELECT key FROM events 
+            JOIN keyboard_events 
+                ON events.id = keyboard_events.event_id 
+            WHERE event = 'd' and type = 'c';
+        """)
+        key_presses = np.asarray(cursor.fetchall())
 
         # Create screen image
         screen_scale = 0.5
@@ -63,7 +73,7 @@ def main():
         plt.imshow(screen_image_scaled, cmap='binary', extent=extent, interpolation=None)
 
         # Plot mouse movement
-        plt.plot(mouse_pos[:, 0], mouse_pos[:, 1], '-b', label='Mouse pos')
+        # plt.plot(mouse_pos[:, 0], mouse_pos[:, 1], '-b', label='Mouse pos')
 
         # Plot mouse clicks
         plt.plot(mouse_click[:, 0], mouse_click[:, 1], 'or', label='Mouse click')

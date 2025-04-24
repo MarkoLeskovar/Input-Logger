@@ -4,5 +4,5 @@ from inputlog import InputLogger
 if __name__ == "__main__":
 
     # Parse arguments
-    logger = InputLogger('test.db')
+    logger = InputLogger('test.db', debug=True)
     logger.run()

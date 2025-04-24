@@ -2,6 +2,8 @@ import time
 import tkinter
 import threading
 from io import BytesIO
+
+import pynput.keyboard
 from PIL import Image, ImageGrab
 from pynput import mouse, keyboard
 
@@ -224,15 +226,14 @@ class InputLogger:
     def _on_key_press(self, key):
         key, key_type = _key_to_string(key)
         timestamp = _get_time_ms() - self._start_time_ms
-        if key is not None:
-            # Add to database
-            self._data_lock.acquire()
-            self._data_cursor.execute("INSERT INTO events VALUES (?, ?, ?, ?)", (self._id, SQL_KEY.key, SQL_KEY.down, timestamp))
-            self._data_cursor.execute("INSERT INTO keyboard_events VALUES (?, ?, ?)", (self._id, key, key_type))
-            self._data_connection.commit()
-            self._data_lock.release()
-            # Update iterator
-            self._id += 1
+        # Add to database
+        self._data_lock.acquire()
+        self._data_cursor.execute("INSERT INTO events VALUES (?, ?, ?, ?)", (self._id, SQL_KEY.key, SQL_KEY.down, timestamp))
+        self._data_cursor.execute("INSERT INTO keyboard_events VALUES (?, ?, ?)", (self._id, key, key_type))
+        self._data_connection.commit()
+        self._data_lock.release()
+        # Update iterator
+        self._id += 1
         # Debug
         if self._debug:
             print(f'[{self._id - 1}] - Key down = [{key}, {key_type}], {timestamp} ms')
@@ -241,19 +242,17 @@ class InputLogger:
     def _on_key_release(self, key):
         key, key_type = _key_to_string(key)
         timestamp = _get_time_ms() - self._start_time_ms
-        if key is not None:
-            # Add to database
-            self._data_lock.acquire()
-            self._data_cursor.execute("INSERT INTO events VALUES (?, ?, ?, ?)", (self._id, SQL_KEY.key, SQL_KEY.up, timestamp))
-            self._data_cursor.execute("INSERT INTO keyboard_events VALUES (?, ?, ?)", (self._id, key, key_type))
-            self._data_connection.commit()
-            self._data_lock.release()
-            # Update iterator
-            self._id += 1
+        # Add to database
+        self._data_lock.acquire()
+        self._data_cursor.execute("INSERT INTO events VALUES (?, ?, ?, ?)", (self._id, SQL_KEY.key, SQL_KEY.up, timestamp))
+        self._data_cursor.execute("INSERT INTO keyboard_events VALUES (?, ?, ?)", (self._id, key, key_type))
+        self._data_connection.commit()
+        self._data_lock.release()
+        # Update iterator
+        self._id += 1
         # Debug
         if self._debug:
             print(f'[{self._id - 1}] - Key up = [{key}, {key_type}], {timestamp} ms')
-
 
 
     # O------------------------------------------------------------------------------O
@@ -289,15 +288,21 @@ def _grab_screenshot(format='png') -> BytesIO:
     screenshot.save(buffer, format=format)
     return buffer
 
+
 def _get_time_ms():
     return int(time.time() * 1000)
 
+
 def _key_to_string(key: keyboard.Key | keyboard.KeyCode) -> tuple[str, str]:
-    if isinstance(key, keyboard.KeyCode):
-        return key.char, SQL_KEY.char
-    elif isinstance(key, keyboard.Key):
-        return key.name, SQL_KEY.other
-    elif not hasattr(key, 'char') and not hasattr(key, 'name'):
-        return str(key), SQL_KEY.none
+    if isinstance(key, pynput.keyboard.KeyCode):
+        if key.char is not None:
+            if key.char.isprintable():
+                return str(key.char), SQL_KEY.char
+            else:
+                return repr(key), SQL_KEY.other
+        else:
+            return str(key), SQL_KEY.other
+    elif isinstance(key, pynput.keyboard.Key):
+        return str(key.name), SQL_KEY.other
     else:
-        return None, SQL_KEY.none
+        return 'None', SQL_KEY.none
