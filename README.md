@@ -1,6 +1,6 @@
 # Input Logger
 
-`loginput` is simple input logger app written in Python. It can log your mouse and keyboard input and save it in a local SQL database.  
+`inputlog` is simple input logger app written in Python. It can log your mouse and keyboard input and save it in a local SQL database.  
 
 ![app_icon](docs/teaser.png)
 
