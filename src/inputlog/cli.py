@@ -70,3 +70,4 @@ def main_cli():
 
     # Run the app
     logger.run()
+

@@ -21,14 +21,18 @@ class SQL_KEY:
     key = 'k'
     up = 'u'
     down = 'd'
-    char = 'c'
-    other = 'o'
-    none = 'n'
+    # Key types
+    type_alphanum = 'A'
+    type_shortcut = 'S'
+    type_control = 'C'
+    type_other = 'O'
+    type_none = 'N'
+
 
 
 '''
 0-----------------------------------------------------------------------------0
-| SQL SETTINGS                                                                |
+| DATABASE CREATION                                                           |
 0-----------------------------------------------------------------------------0
 '''
 
@@ -69,9 +73,11 @@ def create_database(database: str):
             ('{SQL_KEY.key}', 'key'),
             ('{SQL_KEY.up}', 'up'),
             ('{SQL_KEY.down}', 'down'),
-            ('{SQL_KEY.char}', 'char'),
-            ('{SQL_KEY.other}', 'other'),
-            ('{SQL_KEY.none}', 'none');
+            ('{SQL_KEY.type_alphanum}', 'type_alphanum'),
+            ('{SQL_KEY.type_shortcut}', 'type_shortcut'),
+            ('{SQL_KEY.type_control}', 'type_control'),
+            ('{SQL_KEY.type_other}', 'type_other'),
+            ('{SQL_KEY.type_none}', 'type_none');
         """)
         # Create (primary) events table
         connection.execute(f"""
@@ -110,7 +116,7 @@ def create_database(database: str):
             CREATE TABLE keyboard_events (
                 event_id INTEGER PRIMARY KEY, 
                 key      TEXT NOT NULL,
-                type     TEXT NOT NULL CHECK(type IN ('{SQL_KEY.char}', '{SQL_KEY.other}', '{SQL_KEY.none}')),
+                type     TEXT NOT NULL CHECK(type IN ('{SQL_KEY.type_alphanum}', '{SQL_KEY.type_shortcut}', '{SQL_KEY.type_control}', '{SQL_KEY.type_other}', '{SQL_KEY.type_none}')),
             FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE);
         """)
         # Commit results

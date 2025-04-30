@@ -1,29 +1,25 @@
-import os
-import sys
 import sqlite3
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
-
-# TODO : Check whihc character are printable etc...
 
 
 # Define main function
 def main():
     connection = None
+
     # Main logic
     try:
 
         # Connect to a database
-        connection = sqlite3.connect(os.path.join(os.pardir, 'output', 'test_1.db'))
+        connection = sqlite3.connect('test.db')
         cursor = connection.cursor()
 
-        # SQL debugger
-        def debug(sql_query: str):
-            cursor.execute(sql_query)
-            output = cursor.fetchall()
-            for row in output:
-                print(row)
+        # # SQL debugger
+        # def debug(sql_query: str):
+        #     cursor.execute(sql_query)
+        #     output = cursor.fetchall()
+        #     for row in output:
+        #         print(row)
 
         # Get metadata
         cursor.execute("SELECT * FROM metadata;")
@@ -49,15 +45,6 @@ def main():
         """)
         mouse_click = np.asarray(cursor.fetchall())
 
-        # Query key presses
-        cursor.execute("""
-            SELECT key FROM events 
-            JOIN keyboard_events 
-                ON events.id = keyboard_events.event_id 
-            WHERE event = 'd' and type = 'c';
-        """)
-        key_presses = np.asarray(cursor.fetchall())
-
         # Create screen image
         screen_scale = 0.5
         screen_size_scaled = (screen_scale * screen_size).astype('int')
@@ -73,7 +60,7 @@ def main():
         plt.imshow(screen_image_scaled, cmap='binary', extent=extent, interpolation=None)
 
         # Plot mouse movement
-        # plt.plot(mouse_pos[:, 0], mouse_pos[:, 1], '-b', label='Mouse pos')
+        plt.plot(mouse_pos[:, 0], mouse_pos[:, 1], '-b', label='Mouse pos')
 
         # Plot mouse clicks
         plt.plot(mouse_click[:, 0], mouse_click[:, 1], 'or', label='Mouse click')
@@ -83,7 +70,6 @@ def main():
         plt.tight_layout()
         plt.legend()
         plt.show()
-
 
 
     # Handle errors

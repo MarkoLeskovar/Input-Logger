@@ -2,12 +2,25 @@ import time
 import tkinter
 import threading
 from io import BytesIO
-
 import pynput.keyboard
-from PIL import Image, ImageGrab
+from PIL import ImageGrab
 from pynput import mouse, keyboard
 
 from .database import create_database, SQL_KEY
+
+
+'''
+0-----------------------------------------------------------------------------0
+| KEY TYPES                                                                   |
+0-----------------------------------------------------------------------------0
+'''
+
+class KEYS:
+    function = {'f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'f10', 'f11', 'f12'}
+    modifier = {'ctrl_l', 'ctrl_r', 'alt_l', 'alt_gr', 'caps_lock', 'cmd'}
+    navigation = {'up', 'down', 'left', 'right', 'page_up', 'page_down', 'end', 'home', 'menu'}
+    control = {'enter', 'backspace', 'tab', 'caps_lock', 'esc', 'delete', 'insert', 'scroll_lock', 'num_lock'}
+    media = {'media_previous', 'media_play_pause', 'media_stop', 'media_next', 'media_volume_up', 'media_volume_down', 'media_volume_mute'}
 
 
 '''
@@ -297,12 +310,12 @@ def _key_to_string(key: keyboard.Key | keyboard.KeyCode) -> tuple[str, str]:
     if isinstance(key, pynput.keyboard.KeyCode):
         if key.char is not None:
             if key.char.isprintable():
-                return str(key.char), SQL_KEY.char
+                return str(key.char), SQL_KEY.type_alphanum
             else:
-                return repr(key), SQL_KEY.other
+                return repr(key), SQL_KEY.type_shortcut
         else:
-            return str(key), SQL_KEY.other
+            return str(key), SQL_KEY.type_other
     elif isinstance(key, pynput.keyboard.Key):
-        return str(key.name), SQL_KEY.other
+        return str(key.name), SQL_KEY.type_control
     else:
-        return 'None', SQL_KEY.none
+        return 'None', SQL_KEY.type_none

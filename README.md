@@ -66,12 +66,26 @@ terminal:
 
 ## Database structure
 
-(TODO): Description of resulting SQL database structure will follow.
+The data is saved into a local SQLite database, which consist of tables listed bellow. 
+
+- `metadata` - Contains information such as username, operating system and start time.
+- `key_ids` - Contains names of abbreviations (key-values pairs) used the SQL tables.
+- `events` - Main table consisting of mouse and key events. Details are recorded in:
+  - `mouse_pos_events`
+  - `mouse_click_events`
+  - `mouse_scroll_events`
+  - `keyboard_events`
+
+Mouse position `x` and `y` is recorded in pixel screen coordinates, with origin in the top left. Timestamp is recorded 
+in milliseconds since the database creation. For more details on possible datatypes and key identifiers,take a look in
+[`database.py`](src/inputlog/database.py) file. 
+
+![database_layout](docs/database.png)
 
 
 ## Minimal Python example
 
-The input logger can also be used within the python code environment as follows:
+The input logger can also be used within the Python code environment as follows:
 
 ```python
 from inputlog import InputLogger
